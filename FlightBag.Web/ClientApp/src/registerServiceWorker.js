@@ -57,6 +57,10 @@ function registerValidSW (swUrl) {
               // It's the perfect time to display a "New content is
               // available; please refresh." message in your web app.
               console.log('New content is available; please refresh.');
+              if (registration && registration.waiting) {
+                // Skip waiting to remove the requirement to restart browser
+                registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+              }
             } else {
               // At this point, everything has been precached.
               // It's the perfect time to display a
