@@ -1,0 +1,8 @@
+<Project Version="2" Name="FlightBag" FolderName="Packages">
+	<OutputDirectory>.</OutputDirectory>
+	<TemporaryOutputDirectory>_PackageInt</TemporaryOutputDirectory>
+	<Packages>
+		<Package>PackageDefinitions\nguyenquyhy-ingamepanels-flightbag.xml</Package>
+	</Packages>
+</Project>
+

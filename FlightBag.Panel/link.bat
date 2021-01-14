@@ -1,0 +1,1 @@
+mklink /d "C:\MSFS\Community\nguyenquyhy-ingamepanels-flightbag" "%CD%\Packages\nguyenquyhy-ingamepanels-flightbag"

@@ -3,7 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlightBag.Web", "FlightBag.Web\FlightBag.Web.csproj", "{C9788691-963D-4367-8C59-C4BDF63F8720}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlightBag.Web", "FlightBag.Web\FlightBag.Web.csproj", "{C9788691-963D-4367-8C59-C4BDF63F8720}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlightBag.Data", "FlightBag.Data\FlightBag.Data.csproj", "{FF39CB66-B634-4851-B4D4-E69099CA6955}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2F9BF631-214B-41B5-9215-1331FDD4B8D9}"
+	ProjectSection(SolutionItems) = preProject
+		TECH DEBT.md = TECH DEBT.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +22,10 @@ Global
 		{C9788691-963D-4367-8C59-C4BDF63F8720}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9788691-963D-4367-8C59-C4BDF63F8720}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9788691-963D-4367-8C59-C4BDF63F8720}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF39CB66-B634-4851-B4D4-E69099CA6955}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF39CB66-B634-4851-B4D4-E69099CA6955}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF39CB66-B634-4851-B4D4-E69099CA6955}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF39CB66-B634-4851-B4D4-E69099CA6955}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
