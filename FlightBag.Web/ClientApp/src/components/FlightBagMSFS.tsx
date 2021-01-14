@@ -8,6 +8,7 @@ interface Props {
     bag: Bag;
 
     onAddItem: (item: BagItem) => void;
+    onClose: () => void;
 }
 
 const FlightBagMSFS = (props: Props) => {
@@ -28,17 +29,20 @@ const FlightBagMSFS = (props: Props) => {
 
     return <StyledContainer>
         <div>
-            <h3>Flight Bag {props.bag.id}</h3>
+            <h3>
+                Flight Bag {props.bag.id}
+                <StyledCloseButton onClick={props.onClose}>Close</StyledCloseButton>
+            </h3>
             <StyledList>
                 {props.bag.items.map(item => <StyledListItem>
-                    <StyledButton onClick={() => handleItemClick(item)}>{item.title}</StyledButton>
+                    <StyledListButton onClick={() => handleItemClick(item)}>{item.title}</StyledListButton>
                 </StyledListItem>)}
             </StyledList>
         </div>
 
         {!!iframeSrc && <>
             <StyledFrameTitle>{iframeTitle}</StyledFrameTitle>
-            <iframe src={iframeSrc}></iframe>
+            <iframe src={iframeSrc} title={iframeTitle}></iframe>
         </>}
     </StyledContainer>
 }
@@ -80,15 +84,23 @@ margin: 0 3px 0 0;
 const StyledButton = styled.button`
 background-color: #00b4ff;
 color: white;
-font-size: 1.5em;
 border: none;
 margin: 0;
-padding: 5px 10px;
 
 :hover {
     background-color: white;
     color: #00b4ff;
 }
+`
+
+const StyledListButton = styled(StyledButton)`
+font-size: 1.5em;
+padding: 5px 10px;
+`
+
+const StyledCloseButton = styled(StyledButton)`
+position: absolute;
+right: 10px;
 `
 
 const StyledFrameTitle = styled.div`

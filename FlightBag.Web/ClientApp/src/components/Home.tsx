@@ -51,12 +51,26 @@ const Home = (props: RouteComponentProps) => {
     }
 
     if (!bag) {
+        if (localStorage) {
+            const savedCode = localStorage.getItem('bagCode');
+            if (savedCode) {
+                hub.send("JoinBag", savedCode);
+            }
+        }
+
         return <>
             <div><button onClick={handleNewBag}>New flight bag</button></div>
             <div>
                 <input value={bagCode} onChange={e => updateBagCode(e.target.value)} placeholder="Flight bag code" /><button onClick={handleOpenBag}>Open</button>
             </div>
         </>;
+    }
+
+    const handleCloseBag = () => {
+        if (localStorage) {
+            localStorage.removeItem('bagCode');
+        }
+        updateBag(undefined);
     }
 
     const handleAddItem = async (item: BagItem) => {
@@ -87,10 +101,17 @@ const Home = (props: RouteComponentProps) => {
         await hub.send("UpdateBag", bag);
     }
 
+    if (localStorage) {
+        localStorage.setItem('bagCode', bag.id);
+    }
+
     return mode ==='MSFS' ? 
-        <FlightBagMSFS hub={hub} bag={bag} onAddItem={handleAddItem} /> :
+        <FlightBagMSFS hub={hub} bag={bag} 
+            onClose={handleCloseBag}
+            onAddItem={handleAddItem} /> :
         <FlightBag hub={hub} bag={bag} 
-            onAddItem={handleAddItem} 
+            onClose={handleCloseBag}
+            onAddItem={handleAddItem}
             onMoveUp={handleMoveUp}
             onMoveDown={handleMoveDown}
             onRemove={handleRemove} />;

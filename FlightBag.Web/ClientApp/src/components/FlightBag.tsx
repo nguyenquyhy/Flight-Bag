@@ -11,6 +11,7 @@ interface Props {
     onMoveUp: (item: BagItem) => void;
     onMoveDown: (item: BagItem) => void;
     onRemove: (item: BagItem) => void;
+    onClose: () => void;
 }
 
 const FlightBag = (props: Props) => {
@@ -28,7 +29,7 @@ const FlightBag = (props: Props) => {
     }
 
     return <>
-        <h4>Flight Bag <input value={props.bag.id} /></h4>
+        <h4>Flight Bag <input value={props.bag.id} /> <button onClick={props.onClose}>Close</button></h4>
 
         <form onSubmit={handleAdd}>
             <input value={title} onChange={e => changeTitle(e.target.value)} required placeholder="Enter title" />
