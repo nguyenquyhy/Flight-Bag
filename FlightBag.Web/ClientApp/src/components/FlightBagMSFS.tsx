@@ -12,27 +12,27 @@ interface Props {
 }
 
 const FlightBagMSFS = (props: Props) => {
-    const [iframeTitle, changeIframeTitle] = React.useState('');
-    const [iframeSrc, changeIframeSrc] = React.useState('');
+    const [iframeTitle, setIframeTitle] = React.useState('');
+    const [iframeSrc, setIframeSrc] = React.useState('');
+    const [showCode, setShowCode] = React.useState(false);
 
     const handleItemClick = (item: BagItem) => {
         switch (item.type) {
             case 'URL':
-                changeIframeTitle(`[${item.type}] ${item.title}: ${item.data as string}`);
-                changeIframeSrc(item.data as string);
+                setIframeTitle(`[${item.type}] ${item.title}: ${item.data as string}`);
+                setIframeSrc(item.data as string);
                 break;
             case 'Image':
-                changeIframeTitle(`[${item.type}] ${item.title}`);
-                changeIframeSrc(item.data as string);
+                setIframeTitle(`[${item.type}] ${item.title}`);
+                setIframeSrc(item.data as string);
                 break;
         }
-
     }
 
     return <StyledContainer>
         <div>
             <h3>
-                Flight Bag {props.bag.id}
+                Flight Bag <em onClick={() => setShowCode(!showCode)}>[{!showCode ? "Show code" : props.bag.id}]</em>
                 <StyledCloseButton onClick={props.onClose}>Close</StyledCloseButton>
             </h3>
             {props.bag.items.length === 0 ?
