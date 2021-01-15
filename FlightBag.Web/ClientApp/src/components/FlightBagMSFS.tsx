@@ -35,11 +35,13 @@ const FlightBagMSFS = (props: Props) => {
                 Flight Bag {props.bag.id}
                 <StyledCloseButton onClick={props.onClose}>Close</StyledCloseButton>
             </h3>
-            <StyledList>
-                {props.bag.items.map(item => <StyledListItem>
-                    <StyledListButton onClick={() => handleItemClick(item)}>{item.title}</StyledListButton>
-                </StyledListItem>)}
-            </StyledList>
+            {props.bag.items.length === 0 ?
+                <p>Your flight bag is empty. Open <strong>flightbag.flighttracker.tech</strong> to add items to the bag.</p> :
+                <StyledList>
+                    {props.bag.items.map(item => <StyledListItem>
+                        <StyledListButton onClick={() => handleItemClick(item)}>{item.title}</StyledListButton>
+                    </StyledListItem>)}
+                </StyledList>}
         </div>
 
         {!!iframeSrc && <>

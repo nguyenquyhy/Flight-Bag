@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
+import styled from 'styled-components';
 import * as signalR from '@microsoft/signalr';
 import { Bag, BagItem } from '../Models';
+import StartingMSFS from './StartingMSFS';
 import FlightBag from './FlightBag';
 import FlightBagMSFS from './FlightBagMSFS';
 
@@ -14,26 +16,26 @@ const Home = (props: RouteComponentProps) => {
     const searchParams = new URLSearchParams(props.location.search);
     const mode = searchParams.get('mode');
 
-    const [connected, updateConnected] = React.useState(false);
-    const [bagCode, updateBagCode] = React.useState("");
-    const [bag, updateBag] = React.useState<Bag>();
+    const [connected, setConnected] = React.useState(false);
+    const [bagCode, setBagCode] = React.useState("");
+    const [bag, setBag] = React.useState<Bag>();
 
     React.useEffect(() => {
         const f = async () => {
             await hub.start();
-            updateConnected(true);
+            setConnected(true);
         }
         f();
     }, []);
 
     hub.onclose = error => {
-        updateConnected(false);
+        setConnected(false);
     }
     hub.onreconnected = () => {
-        updateConnected(true);
+        setConnected(true);
     }
     hub.on("UpdateBag", bag => {
-        updateBag(bag);
+        setBag(bag);
     });
 
     const handleNewBag = async () => {
@@ -58,19 +60,21 @@ const Home = (props: RouteComponentProps) => {
             }
         }
 
-        return <>
-            <div><button onClick={handleNewBag}>New flight bag</button></div>
-            <div>
-                <input value={bagCode} onChange={e => updateBagCode(e.target.value)} placeholder="Flight bag code" /><button onClick={handleOpenBag}>Open</button>
-            </div>
-        </>;
+        return mode === 'MSFS' ?
+            <StartingMSFS bagCode={bagCode} onBagCodeChange={setBagCode} onBagOpen={handleOpenBag} /> :
+            <StyledContainer>
+                <div><button onClick={handleNewBag}>New flight bag</button></div>
+                <div>
+                    <input value={bagCode} onChange={e => setBagCode(e.target.value)} placeholder="Flight bag code" /><button onClick={handleOpenBag}>Open</button>
+                </div>
+            </StyledContainer>;
     }
 
     const handleCloseBag = () => {
         if (localStorage) {
             localStorage.removeItem('bagCode');
         }
-        updateBag(undefined);
+        setBag(undefined);
     }
 
     const handleAddItem = async (item: BagItem) => {
@@ -105,16 +109,20 @@ const Home = (props: RouteComponentProps) => {
         localStorage.setItem('bagCode', bag.id);
     }
 
-    return mode ==='MSFS' ? 
-        <FlightBagMSFS hub={hub} bag={bag} 
+    return mode ==='MSFS' ?
+        <FlightBagMSFS hub={hub} bag={bag}
             onClose={handleCloseBag}
             onAddItem={handleAddItem} /> :
-        <FlightBag hub={hub} bag={bag} 
+        <FlightBag hub={hub} bag={bag}
             onClose={handleCloseBag}
             onAddItem={handleAddItem}
             onMoveUp={handleMoveUp}
             onMoveDown={handleMoveDown}
             onRemove={handleRemove} />;
 }
+
+const StyledContainer = styled.div`
+padding: 5px;
+`
 
 export default Home;

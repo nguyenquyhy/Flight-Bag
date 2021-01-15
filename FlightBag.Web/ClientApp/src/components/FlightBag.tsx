@@ -55,7 +55,9 @@ const FlightBag = (props: Props) => {
     }
 
     return <StyledContainer>
-        <h4>Flight Bag <input value={props.bag.id} /> <button onClick={props.onClose}>Close</button></h4>
+        <h4>Flight Bag <button onClick={props.onClose}>Close</button></h4>
+
+        <p>Copy the following code into MSFS or share with another pilot. <input value={props.bag.id} /></p>
 
         <StyledForm onSubmit={handleAdd}>
             <div>
