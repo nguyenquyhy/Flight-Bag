@@ -22,6 +22,8 @@ const FlightBagMSFS = (props: Props) => {
                 changeIframeSrc(item.data as string);
                 break;
             case 'Image':
+                changeIframeTitle(`[${item.type}] ${item.title}`);
+                changeIframeSrc(item.data as string);
                 break;
         }
 
