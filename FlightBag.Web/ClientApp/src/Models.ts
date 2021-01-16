@@ -10,3 +10,8 @@ export interface Bag {
 
     items: BagItem[];
 }
+
+export interface TwitchData {
+    oauthToken: string;
+    channel: string;
+}

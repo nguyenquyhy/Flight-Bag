@@ -1,7 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import * as signalR from '@microsoft/signalr';
-import { Bag, BagItem } from '../Models';
+import { ChatClient } from 'twitch-chat-client';
+import { StaticAuthProvider } from 'twitch-auth';
+import { Bag, BagItem, TwitchData } from '../Models';
+import TwitchMessageList, { TwitchMessage } from './TwitchMessageList';
 
 interface Props {
     hub: signalR.HubConnection;
@@ -11,12 +14,27 @@ interface Props {
     onClose: () => void;
 }
 
+declare global {
+    namespace twitchEmoji {
+        export function parse(text: string, options?: any): string;
+    }
+}
+
 const FlightBagMSFS = (props: Props) => {
-    const [iframeTitle, setIframeTitle] = React.useState('');
-    const [iframeSrc, setIframeSrc] = React.useState('');
     const [showCode, setShowCode] = React.useState(false);
 
+    const [selectedItem, setSelectedItem] = React.useState<BagItem | null>(null);
+
+    const [iframeTitle, setIframeTitle] = React.useState('');
+    const [iframeSrc, setIframeSrc] = React.useState('');
+
+    const [twitchOAuthToken, setTwitchOAuthToken] = React.useState('');
+    const [twitchChannel, setTwitchChannel] = React.useState('');
+
+    const [twitchMessages, setTwitchMessages] = React.useState<TwitchMessage[]>([]);
+
     const handleItemClick = (item: BagItem) => {
+        setSelectedItem(item);
         switch (item.type) {
             case 'URL':
                 setIframeTitle(`[${item.type}] ${item.title}: ${item.data as string}`);
@@ -26,8 +44,36 @@ const FlightBagMSFS = (props: Props) => {
                 setIframeTitle(`[${item.type}] ${item.title}`);
                 setIframeSrc(item.data as string);
                 break;
+            case 'Twitch':
+                const twitchData = item.data as TwitchData;
+                setTwitchOAuthToken(twitchData.oauthToken);
+                setTwitchChannel(twitchData.channel);
+                break;
         }
     }
+
+    React.useEffect(() => {
+        if (twitchOAuthToken) {
+            const f = async () => {
+                const authProvider = new StaticAuthProvider('2a29t3dlfov5mqozz2b8biy8oqxs13', twitchOAuthToken);
+                const chatClient = new ChatClient(authProvider, { channels: [twitchChannel] });
+
+                chatClient.onMessage((channel, user, message, msg) => {
+                    const parsed = twitchEmoji.parse(msg.message.value, { emojiSize : 'small' });
+
+                    setTwitchMessages(messages => messages.concat({
+                        id: msg.id,
+                        author: msg.userInfo.displayName,
+                        message: msg.message.value,
+                        htmlMessage: parsed,
+                        rawLine: msg.rawLine
+                    }));
+                });
+                await chatClient.connect();
+            };
+            f();
+        }
+    }, [twitchOAuthToken, twitchChannel]);
 
     return <StyledContainer>
         <div>
@@ -38,17 +84,36 @@ const FlightBagMSFS = (props: Props) => {
             {props.bag.items.length === 0 ?
                 <p>Your flight bag is empty. Open <strong>flightbag.flighttracker.tech</strong> to add items to the bag.</p> :
                 <StyledList>
-                    {props.bag.items.map(item => <StyledListItem>
+                    {props.bag.items.map(item => <StyledListItem key={item.title}>
                         <StyledListButton onClick={() => handleItemClick(item)}>{item.title}</StyledListButton>
                     </StyledListItem>)}
                 </StyledList>}
         </div>
 
-        {!!iframeSrc && <>
-            <StyledFrameTitle>{iframeTitle}</StyledFrameTitle>
-            <iframe src={iframeSrc} title={iframeTitle}></iframe>
-        </>}
+        {selectedItem && <Display type={selectedItem.type} iframeSrc={iframeSrc} iframeTitle={iframeTitle} messages={twitchMessages} />}
     </StyledContainer>
+}
+
+interface DisplayProps {
+    type: string;
+    iframeSrc: string;
+    iframeTitle: string;
+    messages: TwitchMessage[];
+}
+
+const Display = (props: DisplayProps) => {
+    switch (props.type) {
+        case "URL":
+        case "Image":
+            return !!props.iframeSrc ? <>
+                <StyledFrameTitle>{props.iframeTitle}</StyledFrameTitle>
+                <iframe src={props.iframeSrc} title={props.iframeTitle}></iframe>
+            </> : null;
+        case "Twitch":
+            return <TwitchMessageList messages={props.messages} />
+        default:
+            return null;
+    }
 }
 
 const StyledContainer = styled.div`

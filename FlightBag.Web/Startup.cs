@@ -22,6 +22,7 @@ namespace FlightBag.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<AzureOptions>(Configuration.GetSection("Azure"));
+            services.Configure<TwitchOptions>(Configuration.GetSection("Twitch"));
 
             services.AddControllersWithViews();
 

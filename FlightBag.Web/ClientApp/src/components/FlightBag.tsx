@@ -15,21 +15,42 @@ interface Props {
     onClose: () => void;
 }
 
-const ItemData = (props: { type: string, url: string, changeUrl: (u: string) => void }) => {
+interface ItemInputProps {
+    type: string;
+    url: string;
+    onUrlChange: (u: string) => void;
+    oauthToken: string;
+    onOAuthTokenChange: (token: string) => void;
+    channel: string;
+    onChannelChange: (channel: string) => void;
+}
+
+const ItemInput = (props: ItemInputProps) => {
     switch (props.type) {
         case "URL":
             return <div>
                 <StyledLabel htmlFor="url">URL</StyledLabel>
-                <input value={props.url} onChange={e => props.changeUrl(e.target.value)} type="url" placeholder="Enter URL" />
+                <input value={props.url} onChange={e => props.onUrlChange(e.target.value)} name="url" type="url" placeholder="Enter URL" />
             </div>;
         case "Image":
-            return <ImageUpload onUrlChange={url => props.changeUrl(url)} />;
+            return <ImageUpload onUrlChange={url => props.onUrlChange(url)} />;
+        case "Twitch":
+            return <>
+                <div>
+                    <StyledLabel htmlFor="oauth">Twitch OAuth token: <a href="Twitch/Auth" target="_blank" rel="noreferrer">Get one here</a></StyledLabel>
+                    <input value={props.oauthToken} onChange={e => props.onOAuthTokenChange(e.target.value)} name="oauth" type="text" placeholder="OAuth token" />
+                </div>
+                <div>
+                    <StyledLabel htmlFor="channel">Twitch channel:</StyledLabel>
+                    <input value={props.channel} onChange={e => props.onChannelChange(e.target.value)} name="channel" type="text" placeholder="channel name" />
+                </div>
+            </>;
         default:
             return null;
     }
 }
 
-const ItemDataDisplay = (props: { type: string, data: any }) => {
+const ItemDisplay = (props: { type: string, data: any }) => {
     switch (props.type) {
         case "URL":
             return <div>{props.data}</div>;
@@ -41,16 +62,30 @@ const ItemDataDisplay = (props: { type: string, data: any }) => {
 }
 
 const FlightBag = (props: Props) => {
-    const [title, changeTitle] = React.useState('');
-    const [type, changeType] = React.useState('URL');
-    const [url, changeUrl] = React.useState('');
+    const [title, setTitle] = React.useState('');
+    const [type, setType] = React.useState('URL');
+    const [url, setUrl] = React.useState('');
+    const [oauthToken, setOAuthToken] = React.useState('');
+    const [channel, setChannel] = React.useState('');
 
     const handleAdd = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         props.onAddItem({
             title: title,
             type: type,
-            data: url
+            data: ((type, url, oauthToken, channel) => {
+                switch (type) {
+                    case "URL":
+                    case "Image" :
+                        return url;
+                    case "Twitch":
+                        return {
+                            oauthToken: oauthToken,
+                            channel: channel
+                        };
+                    default: return null;
+                }
+            })(type, url, oauthToken, channel)
         })
     }
 
@@ -62,24 +97,28 @@ const FlightBag = (props: Props) => {
         <StyledForm onSubmit={handleAdd}>
             <div>
                 <StyledLabel htmlFor="title">Title</StyledLabel>
-                <input value={title} onChange={e => changeTitle(e.target.value)} name="title" required placeholder="Enter title" />
+                <input value={title} onChange={e => setTitle(e.target.value)} name="title" required placeholder="Enter title" />
             </div>
             <div>
                 <StyledLabel htmlFor="type">Type</StyledLabel>
-                <select value={type} onChange={e => changeType(e.target.value)} name="type">
-                    <option>URL</option>
-                    <option>Image</option>
+                <select value={type} onChange={e => setType(e.target.value)} name="type">
+                    <option value="URL">URL</option>
+                    <option value="Image">Image</option>
+                    <option value="Twitch">Twitch Chat</option>
                 </select>
             </div>
-            <ItemData type={type} url={url} changeUrl={changeUrl} />
+            <ItemInput type={type}
+                url={url} onUrlChange={setUrl}
+                oauthToken={oauthToken} onOAuthTokenChange={setOAuthToken}
+                channel={channel} onChannelChange={setChannel} />
             <StyledButton type="submit">Add</StyledButton>
         </StyledForm>
 
         <StyledList>
-            {props.bag.items.map(item => <StyledListItem>
+            {props.bag.items.map(item => <StyledListItem key={item.title}>
                 <StyledTitle>{item.title}</StyledTitle>
                 <StyledType>{item.type}</StyledType>
-                <ItemDataDisplay type={item.type} data={item.data} />
+                <ItemDisplay type={item.type} data={item.data} />
                 <div>
                     <button onClick={() => props.onMoveUp(item)}>Up</button>
                     <button onClick={() => props.onMoveDown(item)}>Down</button>
