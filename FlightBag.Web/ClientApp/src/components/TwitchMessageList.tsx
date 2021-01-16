@@ -1,11 +1,12 @@
 import * as React from 'react';
 import styled from 'styled-components';
+import { parse } from '../logics/TwitchMessageParser';
 
 export interface TwitchMessage {
     id: string;
     author: string;
     message: string;
-    htmlMessage: string;
+    emotesTag?: string;
     rawLine?: string;
 }
 
@@ -30,7 +31,7 @@ const TwitchMessageList = (props: Props) => {
     return <>
         <StyledFrameTitle>Twitch Channel</StyledFrameTitle>
         <StyledList ref={messageEl}>
-            {props.messages.map(message => <StyledItem key={message.id}>{message.author}: <span dangerouslySetInnerHTML={{ __html: message.htmlMessage }}></span></StyledItem>)}
+            {props.messages.map(message => <StyledItem key={message.id}>{message.author}: {parse(message.message, message.emotesTag)}</StyledItem>)}
         </StyledList>
     </>
 }

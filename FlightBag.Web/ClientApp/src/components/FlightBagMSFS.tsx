@@ -59,13 +59,11 @@ const FlightBagMSFS = (props: Props) => {
                 const chatClient = new ChatClient(authProvider, { channels: [twitchChannel] });
 
                 chatClient.onMessage((channel, user, message, msg) => {
-                    const parsed = twitchEmoji.parse(msg.message.value, { emojiSize : 'small' });
-
                     setTwitchMessages(messages => messages.concat({
                         id: msg.id,
                         author: msg.userInfo.displayName,
                         message: msg.message.value,
-                        htmlMessage: parsed,
+                        emotesTag: msg.tags.get('emotes'),
                         rawLine: msg.rawLine
                     }));
                 });
