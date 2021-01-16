@@ -40,7 +40,7 @@ const ImageUpload = (props: Props) => {
     return <div>
         <input type="file" onChange={e => setFileSelected(e.target.files && e.target.files[0])} key={inputKey} />
         <button onClick={handleFileUpload} disabled={!fileSelected || uploading}>Upload</button>
-        {url && <img src={url} alt='Uploaded image' style={{ maxWidth: 300 }} />}
+        {url && <img src={url} alt='Uploaded' style={{ maxWidth: 300 }} />}
     </div>;
 }
 
