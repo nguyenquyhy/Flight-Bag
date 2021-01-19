@@ -20,7 +20,7 @@ const ImageUpload = (props: Props) => {
             method: 'post'
         });
         if (response.ok) {
-            const sasUrl = decodeURIComponent(await response.text());
+            const sasUrl = await response.text();
 
             // *** UPLOAD TO AZURE STORAGE ***
             const url = await uploadFileToBlob(fileSelected, sasUrl);

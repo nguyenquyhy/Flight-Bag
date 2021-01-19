@@ -38,7 +38,8 @@ const createBlobInContainer = async (containerClient: ContainerClient, file: Fil
         }
     });
 
-    return blobClient.url;
+    // HACK: remove SAS
+    return blobClient.url.split("?")[0];
 }
 
 const uploadFileToBlob = async (file: File | null, sasUrl: string): Promise<string | null> => {

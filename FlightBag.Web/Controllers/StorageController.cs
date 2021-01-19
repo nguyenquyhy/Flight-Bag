@@ -24,7 +24,7 @@ namespace FlightBag.Web.Controllers
             var sasBuilder = new AccountSasBuilder
             {
                 Services = AccountSasServices.Blobs,
-                StartsOn = DateTimeOffset.UtcNow,
+                StartsOn = DateTimeOffset.UtcNow.AddMinutes(-5),
                 ExpiresOn = DateTimeOffset.UtcNow.AddMinutes(5),
                 Protocol = SasProtocol.Https,
                 ResourceTypes = AccountSasResourceTypes.Object | AccountSasResourceTypes.Container,
