@@ -51,8 +51,13 @@ overflow-y: auto;
 
 const StyledItem = styled.li`
 font-size: 1.2em;
-padding: 5px 0 0 10px;
+padding: 8px 0 0 10px;
 margin: 0;
+
+img {
+    margin-top: -8px;
+    margin-bottom: -8px;
+}
 `
 
 export default TwitchMessageList;
