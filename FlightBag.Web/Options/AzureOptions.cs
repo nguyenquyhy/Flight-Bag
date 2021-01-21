@@ -2,6 +2,12 @@ namespace FlightBag.Web
 {
     public class AzureOptions
     {
-        public string StorageAccountConnectionString { get; set; }
+        public StorageAccountOptions StorageAccount { get; set; }
+
+        public class StorageAccountOptions
+        {
+            public string ConnectionString  { get; set; }
+            public string ContainerName { get; set; }
+        }
     }
 }

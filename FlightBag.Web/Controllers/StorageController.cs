@@ -17,9 +17,9 @@ namespace FlightBag.Web.Controllers
             this.azureOptions = azureOptions;
         }
 
-        [Route("RequestUploadUrl")]
+        [Route("RequestUploadInfo")]
         [HttpPost]
-        public string RequestUploadUrl()
+        public object RequestUploadInfo()
         {
             var sasBuilder = new AccountSasBuilder
             {
@@ -31,8 +31,8 @@ namespace FlightBag.Web.Controllers
             };
             sasBuilder.SetPermissions(AccountSasPermissions.Read | AccountSasPermissions.Write | AccountSasPermissions.Update | AccountSasPermissions.Tag);
 
-            var client = new BlobServiceClient(azureOptions.CurrentValue.StorageAccountConnectionString);
-            return client.GenerateAccountSasUri(sasBuilder).ToString();
+            var client = new BlobServiceClient(azureOptions.CurrentValue.StorageAccount.ConnectionString);
+            return new { Sas = client.GenerateAccountSasUri(sasBuilder).ToString(), ContainerName = azureOptions.CurrentValue.StorageAccount.ContainerName };
         }
     }
 }

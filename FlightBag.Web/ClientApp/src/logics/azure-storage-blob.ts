@@ -1,7 +1,5 @@
 import { BlobServiceClient, ContainerClient } from '@azure/storage-blob';
 
-//const sasToken = process.env.storagesastoken || ""; // Fill string with your SAS token
-const containerName = `upload-images`;
 //const storageAccountName = process.env.storageresourcename || ""; // Fill string with your Storage resource name
 
 // Feature flag - disable storage feature to app if not configured
@@ -42,7 +40,7 @@ const createBlobInContainer = async (containerClient: ContainerClient, file: Fil
     return blobClient.url.split("?")[0];
 }
 
-const uploadFileToBlob = async (file: File | null, sasUrl: string): Promise<string | null> => {
+const uploadFileToBlob = async (file: File | null, sasUrl: string, containerName: string): Promise<string | null> => {
     if (!file) return null;
 
     // get BlobService = notice `?` is pulled out of sasToken - if created in Azure portal

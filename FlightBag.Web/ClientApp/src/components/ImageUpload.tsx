@@ -16,14 +16,14 @@ const ImageUpload = (props: Props) => {
         // prepare UI
         setUploading(true);
 
-        const response = await fetch('/api/Storage/RequestUploadUrl', {
+        const response = await fetch('/api/Storage/RequestUploadInfo', {
             method: 'post'
         });
         if (response.ok) {
-            const sasUrl = await response.text();
+            const uploadInfo = await response.json() as { sas: string, containerName: string };
 
             // *** UPLOAD TO AZURE STORAGE ***
-            const url = await uploadFileToBlob(fileSelected, sasUrl);
+            const url = await uploadFileToBlob(fileSelected, uploadInfo.sas, uploadInfo.containerName);
             if (url) {
                 // prepare UI for results
                 setUrl(url);
