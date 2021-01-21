@@ -1,5 +1,5 @@
 import * as React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import * as signalR from '@microsoft/signalr';
 import { ChatClient } from 'twitch-chat-client';
 import { StaticAuthProvider } from 'twitch-auth';
@@ -102,11 +102,17 @@ interface DisplayProps {
 const Display = (props: DisplayProps) => {
     switch (props.type) {
         case "URL":
-        case "Image":
             return !!props.iframeSrc ? <>
                 <StyledFrameTitle>{props.iframeTitle}</StyledFrameTitle>
-                <iframe src={props.iframeSrc} title={props.iframeTitle}></iframe>
+                <StyledIframe src={props.iframeSrc} title={props.iframeTitle}></StyledIframe>
             </> : null;
+        case "Image":
+            return <>
+                <StyledFrameTitle>{props.iframeTitle}</StyledFrameTitle>
+                <StyledImageWrapper>
+                    <img src={props.iframeSrc} title={props.iframeTitle} />
+                </StyledImageWrapper>
+            </>;
         case "Twitch":
             return <TwitchMessageList messages={props.messages} />
         default:
@@ -116,16 +122,18 @@ const Display = (props: DisplayProps) => {
 
 const StyledContainer = styled.div`
 display: grid;
-height: 100%;
+height: calc(100% - 8px);
 color: white;
 align-items: stretch;
 grid-template-rows: min-content min-content auto;
+margin: 0 8px 8px 8px;
 
 h3 {
     padding-left: 5px;
     padding: 10px;
     margin: 0;
     background-color: rgba(0,0,0,0.2);
+    position: relative;
 }
 
 iframe {
@@ -170,10 +178,36 @@ position: absolute;
 right: 10px;
 `
 
+const StyledScrollbar = css`
+::-webkit-scrollbar {
+  width: 1.2em;
+  height: 1.2em;
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #00b4ff;
+  outline: 1px solid slategrey;
+}
+`
+
 const StyledFrameTitle = styled.div`
 background-color: rgba(0,0,0,0.2);
 font-size: 1.2em;
 padding: 10px;
+`
+
+const StyledIframe = styled.iframe`
+${StyledScrollbar}
+`
+
+const StyledImageWrapper = styled.div`
+overflow: auto;
+
+${StyledScrollbar}
 `
 
 export default FlightBagMSFS;
