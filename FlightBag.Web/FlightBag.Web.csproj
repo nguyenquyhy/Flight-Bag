@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FlightBag.Data.AzureStorage\FlightBag.Data.AzureStorage.csproj" />
     <ProjectReference Include="..\FlightBag.Data\FlightBag.Data.csproj" />
   </ItemGroup>
 

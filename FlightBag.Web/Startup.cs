@@ -34,7 +34,8 @@ namespace FlightBag.Web
 
             services.AddSignalR();
 
-            services.AddSingleton<IBagStorage, InMemoryBagStorage>();
+            //services.AddSingleton<IBagStorage, InMemoryBagStorage>();
+            services.AddSingleton<IBagStorage, AzureTableBagStorage>();
             services.AddTransient<CodeGenerator>();
         }
 

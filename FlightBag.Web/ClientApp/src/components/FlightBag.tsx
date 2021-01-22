@@ -30,7 +30,7 @@ const ItemInput = (props: ItemInputProps) => {
         case "URL":
             return <div>
                 <StyledLabel htmlFor="url">URL</StyledLabel>
-                <input value={props.url} onChange={e => props.onUrlChange(e.target.value)} name="url" type="url" placeholder="Enter URL" />
+                <input value={props.url} onChange={e => props.onUrlChange(e.target.value)} name="url" type="url" placeholder="Enter URL" required />
             </div>;
         case "Image":
             return <ImageUpload onUrlChange={url => props.onUrlChange(url)} />;
@@ -38,11 +38,11 @@ const ItemInput = (props: ItemInputProps) => {
             return <>
                 <div>
                     <StyledLabel htmlFor="oauth">Twitch OAuth token: <a href="Twitch/Auth" target="_blank" rel="noreferrer">Get one here</a></StyledLabel>
-                    <input value={props.oauthToken} onChange={e => props.onOAuthTokenChange(e.target.value)} name="oauth" type="text" placeholder="OAuth token" />
+                    <input value={props.oauthToken} onChange={e => props.onOAuthTokenChange(e.target.value)} name="oauth" type="text" placeholder="OAuth token" required />
                 </div>
                 <div>
                     <StyledLabel htmlFor="channel">Twitch channel:</StyledLabel>
-                    <input value={props.channel} onChange={e => props.onChannelChange(e.target.value)} name="channel" type="text" placeholder="channel name" />
+                    <input value={props.channel} onChange={e => props.onChannelChange(e.target.value)} name="channel" type="text" placeholder="channel name" required />
                 </div>
             </>;
         default:
