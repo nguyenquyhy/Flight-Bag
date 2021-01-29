@@ -62,31 +62,45 @@ const ItemDisplay = (props: { type: string, data: any }) => {
 }
 
 const FlightBag = (props: Props) => {
+    const [isAdding, setIsAdding] = React.useState(false);
+
     const [title, setTitle] = React.useState('');
     const [type, setType] = React.useState('URL');
     const [url, setUrl] = React.useState('');
     const [oauthToken, setOAuthToken] = React.useState('');
     const [channel, setChannel] = React.useState('');
 
-    const handleAdd = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleAdd = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        props.onAddItem({
-            title: title,
-            type: type,
-            data: ((type, url, oauthToken, channel) => {
-                switch (type) {
-                    case "URL":
-                    case "Image" :
-                        return url;
-                    case "Twitch":
-                        return {
-                            oauthToken: oauthToken,
-                            channel: channel
-                        };
-                    default: return null;
-                }
-            })(type, url, oauthToken, channel)
-        })
+        try {
+            setIsAdding(true);
+
+            await props.onAddItem({
+                title: title,
+                type: type,
+                data: ((type, url, oauthToken, channel) => {
+                    switch (type) {
+                        case "URL":
+                        case "Image":
+                            return url;
+                        case "Twitch":
+                            return {
+                                oauthToken: oauthToken,
+                                channel: channel
+                            };
+                        default: return null;
+                    }
+                })(type, url, oauthToken, channel)
+            })
+
+            setTitle('');
+            setUrl('');
+            setOAuthToken('');
+            setChannel('');
+        }
+        finally {
+            setIsAdding(false);
+        }
     }
 
     return <StyledContainer>
@@ -111,7 +125,7 @@ const FlightBag = (props: Props) => {
                 url={url} onUrlChange={setUrl}
                 oauthToken={oauthToken} onOAuthTokenChange={setOAuthToken}
                 channel={channel} onChannelChange={setChannel} />
-            <StyledButton type="submit">Add</StyledButton>
+            <StyledButton type="submit" disabled={isAdding}>Add</StyledButton>
         </StyledForm>
 
         <StyledList>
