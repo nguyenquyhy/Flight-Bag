@@ -10,7 +10,7 @@ interface Props {
     hub: signalR.HubConnection;
     bag: Bag;
 
-    onAddItem: (item: BagItem) => void;
+    onAddItem: (item: BagItem) => Promise<void>;
     onClose: () => void;
 }
 
@@ -99,7 +99,48 @@ interface DisplayProps {
     messages: TwitchMessage[];
 }
 
+var top: number | null = null;
+var left: number | null = null;
+var x: number | null = null;
+var y: number | null = null;
+
 const Display = (props: DisplayProps) => {
+    const [zoom, setZoom] = React.useState(1);
+    const imgRef = React.useRef<HTMLImageElement>(null);
+    const imgWrapperRef = React.useRef<HTMLDivElement>(null);
+    const step = 0.1;
+
+    const handleMouseDown = (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
+        if (imgWrapperRef.current) {
+            top = imgWrapperRef.current.scrollTop;
+            left = imgWrapperRef.current.scrollLeft;
+            x = e.clientX;
+            y = e.clientY;
+        }
+    }
+
+    const handleMouseUp = (e: any) => {
+        top = null;
+        left = null;
+        x = null;
+        y = null;
+    }
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
+        if (imgWrapperRef.current && top !== null && left !== null && x !== null && y !== null) {
+            imgWrapperRef.current.scrollTop = top - (e.clientY - y);
+            imgWrapperRef.current.scrollLeft = left - (e.clientX - x);
+        }
+    }
+
+    const handleMouseLeave = (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
+        document.addEventListener('mouseup', handleMouseUp);
+    }
+
+    const handleMouseEnter = (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
+        document.removeEventListener('mouseup', handleMouseUp);
+    }
+
     switch (props.type) {
         case "URL":
             return !!props.iframeSrc ? <>
@@ -108,9 +149,16 @@ const Display = (props: DisplayProps) => {
             </> : null;
         case "Image":
             return <>
-                <StyledFrameTitle>{props.iframeTitle}</StyledFrameTitle>
-                <StyledImageWrapper>
-                    <img src={props.iframeSrc} title={props.iframeTitle} />
+                <StyledFrameTitle>
+                    <div style={{ marginTop: -6, marginBottom: -6, marginLeft: -6, display: 'inline-block' }}>
+                        <StyledZoomButton onClick={() => setZoom(zoom => zoom + step)}>+</StyledZoomButton>
+                        <StyledZoomButton onClick={() => setZoom(zoom => zoom > step ? zoom - step : zoom)}>-</StyledZoomButton>
+                    </div>
+                    <span>{props.iframeTitle} ({Math.floor(zoom * 100)}%)</span>
+                </StyledFrameTitle>
+                <StyledImageWrapper ref={imgWrapperRef}>
+                    <img ref={imgRef} src={props.iframeSrc} title={props.iframeTitle} style={{ width: imgRef.current ? imgRef.current.naturalWidth * zoom : 'auto' }}
+                        onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} onMouseEnter={handleMouseEnter} />
                 </StyledImageWrapper>
             </>;
         case "Twitch":
@@ -178,19 +226,32 @@ position: absolute;
 right: 10px;
 `
 
+const StyledZoomButton = styled(StyledButton)`
+height: 36px;
+width: 36px;
+line-height: 36px;
+margin-right: 4px;
+padding: 0;
+font-size: 1.5em;
+`
+
 const StyledScrollbar = css`
 ::-webkit-scrollbar {
-  width: 1.2em;
-  height: 1.2em;
+    width: 1.3em;
+    height: 1.3em;
 }
 
 ::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #00b4ff;
-  outline: 1px solid slategrey;
+    background-color: #00b4ff;
+    outline: 1px solid slategrey;
+}
+
+::-webkit-scrollbar-corner {
+    background-color: transparent;
 }
 `
 
@@ -208,6 +269,10 @@ const StyledImageWrapper = styled.div`
 overflow: auto;
 
 ${StyledScrollbar}
+
+img {
+    transition: all ease-in-out 0.2s;
+}
 `
 
 export default FlightBagMSFS;
