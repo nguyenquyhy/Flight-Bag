@@ -33,7 +33,7 @@ const ItemInput = (props: ItemInputProps) => {
                 <input value={props.url} onChange={e => props.onUrlChange(e.target.value)} name="url" type="url" placeholder="Enter URL" required />
             </div>;
         case "Image":
-            return <ImageUpload onUrlChange={url => props.onUrlChange(url)} />;
+            return <ImageUpload url={props.url} onUrlChange={url => props.onUrlChange(url)} />;
         case "Twitch":
             return <>
                 <div>
