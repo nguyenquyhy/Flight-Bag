@@ -2,13 +2,15 @@ import * as React from 'react';
 import styled from 'styled-components';
 
 interface Props {
+    vr: boolean;
+
     bagCode: string;
     onBagCodeChange: (code: string) => void;
     onBagOpen: () => void;
 }
 
 const StartingMSFS = (props: Props) => {
-    return <StyledContainer>
+    return <StyledContainer zoom={props.vr ? 2 : 1}>
         <p>Create your flight bag at <strong>flightbag.flighttracker.tech</strong> and paste (Ctrl+V) the flight bag code below.</p>
         <div>
             <StyledInput value={props.bagCode} onChange={e => props.onBagCodeChange(e.target.value)} placeholder="Flight bag code" />
@@ -17,7 +19,8 @@ const StartingMSFS = (props: Props) => {
     </StyledContainer>;
 }
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ zoom: number }>`
+zoom: ${props => props.zoom}
 color: white;
 font-size: 1.2em;
 `

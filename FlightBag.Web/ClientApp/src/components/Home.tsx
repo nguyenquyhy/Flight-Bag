@@ -15,6 +15,7 @@ const hub = new signalR.HubConnectionBuilder()
 const Home = (props: RouteComponentProps) => {
     const searchParams = new URLSearchParams(props.location.search);
     const mode = searchParams.get('mode');
+    const vr = searchParams.get('vr');
 
     const [connected, setConnected] = React.useState(false);
     const [bagCode, setBagCode] = React.useState("");
@@ -61,7 +62,7 @@ const Home = (props: RouteComponentProps) => {
         }
 
         return mode === 'MSFS' ?
-            <StartingMSFS bagCode={bagCode} onBagCodeChange={setBagCode} onBagOpen={handleOpenBag} /> :
+            <StartingMSFS vr={vr === 'true'} bagCode={bagCode} onBagCodeChange={setBagCode} onBagOpen={handleOpenBag} /> :
             <StyledContainer>
                 <div><button onClick={handleNewBag}>New flight bag</button></div>
                 <div>
@@ -110,7 +111,8 @@ const Home = (props: RouteComponentProps) => {
     }
 
     return mode ==='MSFS' ?
-        <FlightBagMSFS hub={hub} bag={bag}
+        <FlightBagMSFS vr={vr === 'true'}
+            hub={hub} bag={bag}
             onClose={handleCloseBag}
             onAddItem={handleAddItem} /> :
         <FlightBag hub={hub} bag={bag}

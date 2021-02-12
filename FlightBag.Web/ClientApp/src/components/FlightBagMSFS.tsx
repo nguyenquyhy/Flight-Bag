@@ -7,6 +7,8 @@ import { Bag, BagItem, TwitchData } from '../Models';
 import TwitchMessageList, { TwitchMessage } from './TwitchMessageList';
 
 interface Props {
+    vr: boolean;
+
     hub: signalR.HubConnection;
     bag: Bag;
 
@@ -73,9 +75,10 @@ const FlightBagMSFS = (props: Props) => {
         }
     }, [twitchOAuthToken, twitchChannel]);
 
-    return <StyledContainer>
+    return <StyledContainer zoom={props.vr ? 2 : 1}>
         <div>
             <h3>
+                {props.vr && <StyledVR>VR</StyledVR>}
                 Flight Bag <em onClick={() => setShowCode(!showCode)}>[{!showCode ? "Show code" : props.bag.id}]</em>
                 <StyledCloseButton onClick={props.onClose}>Close</StyledCloseButton>
             </h3>
@@ -91,6 +94,38 @@ const FlightBagMSFS = (props: Props) => {
         {selectedItem && <Display type={selectedItem.type} iframeSrc={iframeSrc} iframeTitle={iframeTitle} messages={twitchMessages} />}
     </StyledContainer>
 }
+
+const StyledVR = styled.span`
+background: white;
+color: black;
+padding: 0 5px;
+margin-right: 5px;
+`
+
+const StyledContainer = styled.div<{zoom: number}>`
+zoom: ${props => props.zoom};
+display: grid;
+height: calc(100% - 8px);
+color: white;
+align-items: stretch;
+grid-template-rows: min-content min-content auto;
+margin: 0 8px 8px 8px;
+
+h3 {
+    padding-left: 5px;
+    padding: 10px;
+    margin: 0;
+    background-color: rgba(0,0,0,0.2);
+    position: relative;
+}
+
+iframe {
+    border: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+`
 
 interface DisplayProps {
     type: string;
@@ -167,30 +202,6 @@ const Display = (props: DisplayProps) => {
             return null;
     }
 }
-
-const StyledContainer = styled.div`
-display: grid;
-height: calc(100% - 8px);
-color: white;
-align-items: stretch;
-grid-template-rows: min-content min-content auto;
-margin: 0 8px 8px 8px;
-
-h3 {
-    padding-left: 5px;
-    padding: 10px;
-    margin: 0;
-    background-color: rgba(0,0,0,0.2);
-    position: relative;
-}
-
-iframe {
-    border: none;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-}
-`
 
 const StyledList = styled.ul`
 list-style: none;
