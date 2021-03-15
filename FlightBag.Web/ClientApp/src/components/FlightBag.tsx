@@ -19,6 +19,8 @@ interface ItemInputProps {
     type: string;
     url: string;
     onUrlChange: (u: string) => void;
+    text: string;
+    onTextChange: (t: string) => void;
     oauthToken: string;
     onOAuthTokenChange: (token: string) => void;
     channel: string;
@@ -34,6 +36,10 @@ const ItemInput = (props: ItemInputProps) => {
             </div>;
         case "Image":
             return <ImageUpload url={props.url} onUrlChange={url => props.onUrlChange(url)} />;
+        case "Text":
+            return <div>
+                <textarea value={props.text} onChange={e => props.onTextChange(e.target.value)} name="text" placeholder="Enter content" required />
+            </div>
         case "Twitch":
             return <>
                 <div>
@@ -56,6 +62,8 @@ const ItemDisplay = (props: { type: string, data: any }) => {
             return <div>{props.data}</div>;
         case "Image":
             return <img src={props.data} alt="" style={{ maxHeight: 100 }} />;
+        case "Text":
+            return <pre>{props.data}</pre>;
         default:
             return null;
     }
@@ -67,6 +75,7 @@ const FlightBag = (props: Props) => {
     const [title, setTitle] = React.useState('');
     const [type, setType] = React.useState('URL');
     const [url, setUrl] = React.useState('');
+    const [text, setText] = React.useState('');
     const [oauthToken, setOAuthToken] = React.useState('');
     const [channel, setChannel] = React.useState('');
 
@@ -83,6 +92,8 @@ const FlightBag = (props: Props) => {
                         case "URL":
                         case "Image":
                             return url;
+                        case "Text":
+                            return text;
                         case "Twitch":
                             return {
                                 oauthToken: oauthToken,
@@ -118,11 +129,13 @@ const FlightBag = (props: Props) => {
                 <select value={type} onChange={e => setType(e.target.value)} name="type">
                     <option value="URL">URL</option>
                     <option value="Image">Image</option>
+                    <option value="Text">Text</option>
                     <option value="Twitch">Twitch Chat</option>
                 </select>
             </div>
             <ItemInput type={type}
                 url={url} onUrlChange={setUrl}
+                text={text} onTextChange={setText}
                 oauthToken={oauthToken} onOAuthTokenChange={setOAuthToken}
                 channel={channel} onChannelChange={setChannel} />
             <StyledButton type="submit" disabled={isAdding}>Add</StyledButton>

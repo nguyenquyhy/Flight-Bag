@@ -30,6 +30,8 @@ const FlightBagMSFS = (props: Props) => {
     const [iframeTitle, setIframeTitle] = React.useState('');
     const [iframeSrc, setIframeSrc] = React.useState('');
 
+    const [text, setText] = React.useState('');
+
     const [twitchOAuthToken, setTwitchOAuthToken] = React.useState('');
     const [twitchChannel, setTwitchChannel] = React.useState('');
 
@@ -45,6 +47,9 @@ const FlightBagMSFS = (props: Props) => {
             case 'Image':
                 setIframeTitle(`[${item.type}] ${item.title}`);
                 setIframeSrc(item.data as string);
+                break;
+            case 'Text':
+                setText(item.data as string);
                 break;
             case 'Twitch':
                 const twitchData = item.data as TwitchData;
@@ -91,7 +96,7 @@ const FlightBagMSFS = (props: Props) => {
                 </StyledList>}
         </div>
 
-        {selectedItem && <Display type={selectedItem.type} iframeSrc={iframeSrc} iframeTitle={iframeTitle} messages={twitchMessages} />}
+        {selectedItem && <Display vr={props.vr} type={selectedItem.type} iframeSrc={iframeSrc} iframeTitle={iframeTitle} text={text} messages={twitchMessages} />}
     </StyledContainer>
 }
 
@@ -128,9 +133,11 @@ iframe {
 `
 
 interface DisplayProps {
+    vr: boolean;
     type: string;
     iframeSrc: string;
     iframeTitle: string;
+    text: string;
     messages: TwitchMessage[];
 }
 
@@ -196,6 +203,11 @@ const Display = (props: DisplayProps) => {
                         onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} onMouseEnter={handleMouseEnter} />
                 </StyledImageWrapper>
             </>;
+        case "Text":
+            return <>
+                <div>&nbsp;</div>
+                <StyledText vr={props.vr}>{props.text}</StyledText>
+            </>
         case "Twitch":
             return <TwitchMessageList messages={props.messages} />
         default:
@@ -284,6 +296,19 @@ ${StyledScrollbar}
 img {
     transition: all ease-in-out 0.2s;
 }
+`
+
+const StyledText = styled.pre<{ vr: boolean }>`
+font-size: ${props => props.vr ? '3em' : '1.5em'};
+overflow-x: auto;
+white-space: pre-wrap;
+white-space: -moz-pre-wrap;
+white-space: -pre-wrap;
+white-space: -o-pre-wrap;
+word-wrap: break-word;
+overflow: auto;
+
+${StyledScrollbar}
 `
 
 export default FlightBagMSFS;
